@@ -248,14 +248,14 @@ public class RedAndBlackTree<E extends Comparable<E>> {
             }
         }
         //进行调整
-        adjust(node);
+        inputAdjust(node);
     }
 
     /**
-     * 调整
+     * 新增接电后调整
      * @param node 需要调整的节点
      */
-    public void adjust(TreeNode node){
+    public void inputAdjust(TreeNode node){
         //如果节点为根节点，则将节点颜色变为黑色
         if(this.root == node){
             this.root.color = "black";
@@ -276,7 +276,7 @@ public class RedAndBlackTree<E extends Comparable<E>> {
                     tmpNode.parent.color = "red";
                     //将祖父节点设为当前节点
                     node = tmpNode.parent;
-                    adjust(node);
+                    inputAdjust(node);
                 }
                 //如果叔叔节点是黑色，而且当前节点是右孩子
                 else if(node == node.parent.rightChild){
@@ -284,7 +284,7 @@ public class RedAndBlackTree<E extends Comparable<E>> {
                     node = node.parent;
                     leftRotate(node);
                     //接着进行调整
-                    adjust(node);
+                    inputAdjust(node);
                 }
                 //如果叔叔节点是黑色，而且当前节点是左孩子
                 else{
@@ -309,7 +309,7 @@ public class RedAndBlackTree<E extends Comparable<E>> {
                     tmpNode.parent.color = "red";
                     //将祖父节点设为当前节点
                     node = tmpNode.parent;
-                    adjust(node);
+                    inputAdjust(node);
                 }
                 //如果叔叔节点是黑色，而且当前节点是左孩子
                 else if(node == node.parent.leftChild){
@@ -317,7 +317,7 @@ public class RedAndBlackTree<E extends Comparable<E>> {
                     node = node.parent;
                     rightRotate(node);
                     //接着进行调整
-                    adjust(node);
+                    inputAdjust(node);
                 }
                 //如果叔叔节点是黑色，而且当前节点是右孩子
                 else{
