@@ -210,6 +210,7 @@ public class RedAndBlackTree<E extends Comparable<E>> {
             }
             i++;
         }
+        System.out.println();
     }
 
     /**
@@ -252,7 +253,7 @@ public class RedAndBlackTree<E extends Comparable<E>> {
     }
 
     /**
-     * 新增接电后调整
+     * 新增节点后调整
      * @param node 需要调整的节点
      */
     public void inputAdjust(TreeNode node){
@@ -327,6 +328,217 @@ public class RedAndBlackTree<E extends Comparable<E>> {
                     node.parent.parent.color = "red";
                     //将祖父节点进行左旋
                     leftRotate(node.parent.parent);
+                }
+            }
+        }
+    }
+
+    /**
+     * 删除节点
+     * @param value 需要删除的节点值
+     */
+    public void remove(E value){
+        //查找要删除的节点
+        TreeNode node = search(this,value);
+        //如果node的左孩子和右孩子都不为空，则寻找node的后继结点(右子树的最小节点)，将后继结点赋给replace
+        TreeNode replace = null;
+        if(node.leftChild != null && node.rightChild != null) {
+            replace = node.rightChild;
+            while (replace.leftChild != null) {
+                replace = replace.leftChild;
+            }
+        }
+        else{
+            replace = node;
+        }
+        TreeNode tmpNode = null;
+        //如果replace为叶子节点，则直接删除
+        if(replace.leftChild == null && replace.rightChild == null){
+            //如果replace为根节点，则直接置空
+            if(replace == this.root){
+                this.root = null;
+                return;
+            }
+            else {
+                //用tmpNode空叶子节点代替replace节点，否则调整会报空指针
+                tmpNode = new TreeNode(replace.parent,null,null,(E)"*","black");
+                if (replace == replace.parent.leftChild) {
+                    replace.parent.leftChild = tmpNode;
+                } else {
+                    replace.parent.rightChild = tmpNode;
+                }
+            }
+        }
+        //如果replace左子树不为空，则用replace左子树替代replace
+        else if (replace.leftChild != null){
+            tmpNode = replace.leftChild;
+            if(replace == this.root){
+                this.root = tmpNode;
+            }
+            else if(replace == replace.parent.leftChild){
+                replace.parent.leftChild = tmpNode;
+                tmpNode.parent = replace.parent;
+            }
+            else{
+                replace.parent.rightChild = tmpNode;
+                tmpNode.parent = replace.parent;
+            }
+        }
+        //如果replace右子树不为空，则用replace右子树替代replace
+        else{
+            tmpNode = replace.rightChild;
+            if(replace == this.root){
+                this.root = tmpNode;
+            }
+            else if(replace == replace.parent.leftChild){
+                replace.parent.leftChild = tmpNode;
+                tmpNode.parent = replace.parent;
+            }
+            else{
+                replace.parent.rightChild = tmpNode;
+                tmpNode.parent = replace.parent;
+            }
+        }
+        //如果replace的值不等于node的值，则将repleace的节点值赋给node
+        if(replace.value.compareTo(node.value) != 0){
+            node.value = replace.value;
+        }
+        //如果replace为黑色节点，则对tmpNode进行删除调整
+        if(replace.color.equals("black")){
+            deleteAdjust(tmpNode);
+        }
+        //如果tmpNode是空节点，则将它删除
+        if(tmpNode.value.equals("*")){
+            if(tmpNode == tmpNode.parent.leftChild){
+                tmpNode.parent.leftChild = null;
+            }
+            else{
+                tmpNode.parent.rightChild = null;
+            }
+        }
+    }
+
+    /**
+     * 查找节点
+     * @param value 需要查找的节点值
+     * @return 节点
+     */
+    public TreeNode search(RedAndBlackTree<E> tree,E value){
+        if(tree.root == null){
+            return null;
+        }
+        if(value.compareTo(tree.root.value) == 0){
+            return tree.root;
+        }
+        else if(value.compareTo(tree.root.value) < 0){
+            RedAndBlackTree<E> leftTree = new RedAndBlackTree<E>();
+            leftTree.root = tree.root.leftChild;
+            return search(leftTree,value);
+        }
+        else{
+            RedAndBlackTree<E> rightTree = new RedAndBlackTree<E>();
+            rightTree.root = tree.root.rightChild;
+            return search(rightTree,value);
+        }
+    }
+
+    /**
+     * 删除节点后调整
+     * @param node 需要调整的节点
+     */
+    public void deleteAdjust(TreeNode node){
+        //如果node是红色节点，则将node设为黑色
+        if(node.color.equals("red")){
+            node.color = "black";
+        }
+        //如果node是黑色节点，且不是根节点
+        else if(node != this.root){
+            //如果node是父亲的左孩子
+            if(node == node.parent.leftChild){
+                //将node父亲的右孩子赋给tmpNode
+                TreeNode tmpNode = node.parent.rightChild;
+                //如果node的兄弟节点tmpNode为红色
+                if(tmpNode.color.equals("red")){
+                    //将node的兄弟tmpNode设为黑色
+                    tmpNode.color = "black";
+                    //将node的父亲设为红色
+                    node.parent.color = "red";
+                    //将node的父亲进行左旋
+                    leftRotate(node.parent);
+                    //重新将tmpNode设为node的兄弟
+                    tmpNode = node.parent.rightChild;
+                }
+                //如果node的兄弟节点tmpNode是黑色，而且tmpNode两个孩子节点都是黑色
+                if(tmpNode.color.equals("black") && (tmpNode.leftChild == null || tmpNode.leftChild.color.equals("black")) && (tmpNode.rightChild == null || tmpNode.rightChild.color.equals("black"))){
+                    //将node的兄弟节点设为红色，递归对node节点的父亲进行操作
+                    tmpNode.color = "red";
+                    deleteAdjust(node.parent);
+                }
+                //如果node的兄弟节点tmpNode是黑色，而且tmpNode的左孩子是红色，右孩子是黑色
+                if(tmpNode.color.equals("black") && tmpNode.leftChild != null && tmpNode.leftChild.color.equals("red") && (tmpNode.rightChild == null || tmpNode.rightChild.color.equals("black"))){
+                    //将tmpNode的左孩子设为黑色
+                    tmpNode.leftChild.color = "black";
+                    //将tmpNode设为红色
+                    tmpNode.color = "red";
+                    //将tmpNode进行右旋
+                    rightRotate(tmpNode);
+                    //重新将tmpNode设为node的兄弟节点
+                    tmpNode = node.parent.rightChild;
+                }
+                //如果node的兄弟节点tmpNode是黑色，而且tmpNode的右孩子是红色
+                if(tmpNode.color.equals("black") && tmpNode.rightChild != null && tmpNode.rightChild.color.equals("red")){
+                    //将node父节点的颜色赋给兄弟节点tmpNode
+                    tmpNode.color = node.parent.color;
+                    //将node的父节点设为黑色
+                    node.parent.color = "black";
+                    //将tmpNode的右孩子设为黑色
+                    tmpNode.rightChild.color = "black";
+                    //对node的父亲进行左旋
+                    leftRotate(node.parent);
+                }
+            }
+            //如果node是父亲的右孩子
+            else{
+                //将node父亲的左孩子赋给tmpNode
+                TreeNode tmpNode = node.parent.leftChild;
+                //如果node的兄弟节点tmpNode为红色
+                if(tmpNode.color.equals("red")){
+                    //将node的兄弟tmpNode设为黑色
+                    tmpNode.color = "black";
+                    //将node的父亲设为红色
+                    node.parent.color = "red";
+                    //将node的父亲进行右旋
+                    rightRotate(node.parent);
+                    //重新将tmpNode设为node的兄弟
+                    tmpNode = node.parent.leftChild;
+                }
+                //如果node的兄弟节点tmpNode是黑色，而且tmpNode两个孩子节点都是黑色
+                if(tmpNode.color.equals("black") && (tmpNode.leftChild == null || tmpNode.leftChild.color.equals("black")) && (tmpNode.rightChild == null || tmpNode.rightChild.color.equals("black"))){
+                    //将node的兄弟节点设为红色，递归对node节点的父亲进行操作
+                    tmpNode.color = "red";
+                    deleteAdjust(node.parent);
+                }
+                //如果node的兄弟节点tmpNode是黑色，而且tmpNode的右孩子是红色，左孩子是黑色
+                if(tmpNode.color.equals("black") && tmpNode.rightChild != null && tmpNode.rightChild.color.equals("red") && (tmpNode.leftChild == null || tmpNode.leftChild.color.equals("black"))){
+                    //将tmpNode的右孩子设为黑色
+                    tmpNode.rightChild.color = "black";
+                    //将tmpNode设为红色
+                    tmpNode.color = "red";
+                    //将tmpNode进行左旋
+                    leftRotate(tmpNode);
+                    //重新将tmpNode设为node的兄弟节点
+                    tmpNode = node.parent.leftChild;
+                }
+                //如果node的兄弟节点tmpNode是黑色，而且tmpNode的左孩子是红色
+                if(tmpNode.color.equals("black") && tmpNode.leftChild != null && tmpNode.leftChild.color.equals("red")){
+                    //将node父节点的颜色赋给兄弟节点tmpNode
+                    tmpNode.color = node.parent.color;
+                    //将node的父节点设为黑色
+                    node.parent.color = "black";
+                    //将tmpNode的左孩子设为黑色
+                    tmpNode.leftChild.color = "black";
+                    //对node的父亲进行右旋
+                    rightRotate(node.parent);
                 }
             }
         }
