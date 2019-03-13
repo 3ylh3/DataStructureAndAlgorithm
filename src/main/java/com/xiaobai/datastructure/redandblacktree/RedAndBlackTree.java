@@ -9,7 +9,7 @@ import java.util.LinkedList;
  * 2.根节点是黑色
  * 3.每个叶子节点是黑色，这里的叶子节点是指为空的叶子节点
  * 4.如果一个节点是红的，那么它的子节点必须是黑的
- * 5.从一个节点到该节点的子孙节点的所有路径上包含相同数目的黑色节点
+ * 5.从一个节点到该节点的子孙节点的所有最短路径上包含相同数目的黑色节点
  * @param <E> 树节点值类型
  */
 public class RedAndBlackTree<E extends Comparable<E>> {
