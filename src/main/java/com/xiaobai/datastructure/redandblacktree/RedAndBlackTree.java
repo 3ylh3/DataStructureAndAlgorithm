@@ -162,7 +162,7 @@ public class RedAndBlackTree<E extends Comparable<E>> {
         while(list1.size() != 0){
             //list1出队列
             TreeNode node = list1.removeFirst();
-            //将节点值存进list2队列
+            //将节点存进list2队列
             list2.addLast(node);
             //将节点左右孩子分别入队列list1，如果为空则入节点值为*的
             if(node.leftChild != null){
