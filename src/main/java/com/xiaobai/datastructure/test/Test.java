@@ -1,6 +1,7 @@
 package com.xiaobai.datastructure.test;
 
 import com.xiaobai.datastructure.redandblacktree.RedAndBlackTree;
+import com.xiaobai.datastructure.sort.Sort;
 
 public class Test {
     public static void main(String[] args) {
@@ -26,5 +27,15 @@ public class Test {
         tree.remove(901);
         tree.remove(854);
         tree.printTree(tree);
+        int[] a = {10,2,8,7,9,3,4,1,6,5};
+        //排序测试
+        Sort sort = new Sort();
+        //冒泡排序
+        //sort.bubbleSort(a);
+        //快速排序
+        sort.quickSort(a,0,a.length - 1);
+        for (int i : a) {
+            System.out.print(i + " ");
+        }
     }
 }
