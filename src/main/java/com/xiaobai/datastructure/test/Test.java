@@ -1,6 +1,7 @@
 package com.xiaobai.datastructure.test;
 
 import com.xiaobai.datastructure.redandblacktree.RedAndBlackTree;
+import com.xiaobai.datastructure.search.Search;
 import com.xiaobai.datastructure.sort.Sort;
 
 public class Test {
@@ -33,9 +34,23 @@ public class Test {
         //冒泡排序
         //sort.bubbleSort(a);
         //快速排序
-        sort.quickSort(a,0,a.length - 1);
+        //sort.quickSort(a,0,a.length - 1);
+        //直接插入排序
+        //sort.insertSort(a);
+        //希尔排序
+        //sort.shellSort(a,4);
+        //选择排序
+        //sort.selectSort(a);
+        //堆排序
+        //sort.heapSort(a);
+        //归并排序
+        sort.mergeSort(a,0,a.length - 1);
         for (int i : a) {
             System.out.print(i + " ");
         }
+        System.out.println();
+        //二分查找测试
+        Search search = new Search();
+        System.out.println("index:" + search.binarySearch(a,4,0,a.length) + " value:" + 4);
     }
 }
